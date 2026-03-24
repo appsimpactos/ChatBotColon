@@ -54,124 +54,10 @@ const CAT_EMOJI = {
   6: "🌊", 7: "🎨", 8: "🍸", 9: "⛰️",
 };
 
-const PROFILE_NAMES = {
-  viajero: "🇪🇸 Viajero Europa / Negocios",
-  aventura: "🏔️ Aventura",
-  religioso: "🙏 Turismo Religioso",
-  vino: "🍷 Turismo de Vino",
-};
+// ── URL base para las rutas en el mapa ────────────────────
 
-// ── Mensajes de bienvenida por perfil ────────────────────
-
-const PROFILE_WELCOME = {
-  viajero:
-    `✨ *Hola, viajero.*\n` +
-    `Aquí en Colón encontrarás experiencias que ` +
-    `combinan tradición mexicana con calidad turística.\n\n` +
-    `Selecciona una opción para explorar:`,
-  aventura:
-    `⛰️ *¡Bienvenido, aventurero!*\n` +
-    `Colón tiene spots de naturaleza y aventura.\n` +
-    `Te comparto lo que tenemos registrado:`,
-  religioso:
-    `🌹 *Bienvenido, peregrino.*\n` +
-    `Colón es hogar de la *Basílica de Soriano* ` +
-    `y otros sitios históricos de gran valor religioso.\n\n` +
-    `¿Qué información necesitas?`,
-  vino:
-    `🍷 En Colón encontrarás viñedos, queserías ` +
-    `artesanales y restaurantes de la región.\n\n` +
-    `¿Qué prefieres?`,
-};
-
-// ── Menús de opciones por perfil ─────────────────────────
-
-const PROFILE_MENUS = {
-  viajero: {
-    btn: "🧭 Ver opciones",
-    rows: [
-      { id: "v_ruta", title: "🍷 Viñedos y Queserías", description: "Productores de vino y queso" },
-      { id: "v_arte", title: "🏺 Artesanías", description: "Ópalo, lana, cerámica" },
-      { id: "v_gastro", title: "🍽️ Restaurantes", description: "Gastronomía de la región" },
-      { id: "v_historia", title: "🏛️ Sitios históricos", description: "Museos, misiones, capillas" },
-      { id: "v_contacto", title: "📞 Conectar prestador", description: "Contacto directo WhatsApp" },
-    ],
-  },
-  aventura: {
-    btn: "🧭 Ver actividades",
-    rows: [
-      { id: "a_senderismo", title: "🏃 Senderismo", description: "Zamorano, Pilones, Presa" },
-      { id: "a_escalada", title: "🧗 Tirolesa y escalada", description: "Aventura extrema" },
-      { id: "a_camping", title: "🏨 Hospedaje", description: "Hoteles y alojamiento" },
-      { id: "a_mapa", title: "📍 Mapa de spots", description: "Ubicaciones GPS" },
-    ],
-  },
-  religioso: {
-    btn: "🧭 Ver opciones",
-    rows: [
-      { id: "r_basilica", title: "⛪ Basílica Soriano", description: "Información del sitio" },
-      { id: "r_capilla", title: "🕯️ Capilla de Ánimas", description: "Historia y ubicación" },
-      { id: "r_sitios", title: "🏛️ Sitios históricos", description: "Misiones y museos" },
-      { id: "r_comida", title: "🍽️ Restaurantes", description: "Opciones para comer" },
-    ],
-  },
-  vino: {
-    btn: "🧭 Ver opciones",
-    rows: [
-      { id: "w_vinedos", title: "🍷 Viñedos", description: "Degustaciones y recorridos" },
-      { id: "w_quesos", title: "🧀 Queserías", description: "Productores de queso" },
-      { id: "w_maridajes", title: "🍽️ Restaurantes", description: "Gastronomía de la región" },
-      { id: "w_tiendas", title: "🛍️ Artesanías", description: "Productos locales" },
-    ],
-  },
-};
-
-// ── Mapeo: opción del menú → tipo de acción ──────────────
-
-const OPTION_ACTION = {
-  // Viajero
-  v_ruta:     { type: "rich", id: "ruta_queso_vino" },
-  v_arte:     { type: "cat", catId: 7 },
-  v_gastro:   { type: "cat", catId: 1 },
-  v_historia: { type: "cat", catId: 4 },
-  v_contacto: { type: "rich", id: "contacto_prestadores" },
-  // Aventura
-  a_senderismo: { type: "cat", catId: 9 },
-  a_escalada:   { type: "cat", catId: 5 },
-  a_camping:    { type: "cat", catId: 2 },
-  a_mapa:       { type: "rich", id: "mapa_aventura" },
-  // Religioso
-  r_basilica:   { type: "biz", bizId: 28 },
-  r_capilla:    { type: "biz", bizId: 29 },
-  r_sitios:     { type: "cat", catId: 4 },
-  r_comida:     { type: "cat", catId: 1 },
-  // Vino
-  w_vinedos:   { type: "cat", catId: 3 },
-  w_quesos:    { type: "rich", id: "queserias" },
-  w_maridajes: { type: "rich", id: "maridajes" },
-  w_tiendas:   { type: "cat", catId: 7 },
-};
-
-// ── Palabras clave de texto libre → acción ───────────────
-
-const KEYWORDS = {
-  restaurante: "cat_1", restaurantes: "cat_1", comida: "cat_1",
-  comer: "cat_1",
-  hotel: "cat_2", hoteles: "cat_2", hospedaje: "cat_2", dormir: "cat_2",
-  "viñedos": "cat_3", vinedos: "cat_3", vino: "cat_3", cata: "cat_3",
-  historia: "cat_4", "históricos": "cat_4", historicos: "cat_4",
-  iglesia: "cat_4",
-  experiencias: "cat_5", experiencia: "cat_5", tour: "cat_5", tours: "cat_5",
-  balneario: "cat_6", balnearios: "cat_6", alberca: "cat_6",
-  "artesanías": "cat_7", artesanias: "cat_7", artesanos: "cat_7",
-  artesano: "cat_7",
-  bares: "cat_8", bar: "cat_8",
-  aventura: "cat_9", escalada: "cat_9", tirolesa: "cat_9",
-  senderismo: "cat_9", zamorano: "cat_9",
-  misa: "cat_4", "basílica": "cat_4", basilica: "cat_4",
-  soriano: "cat_4",
-  queso: "cat_3", quesos: "cat_3",
-};
+const MAP_BASE_URL = "https://colon.click/sistema/mapa";
+const IMAGES_BASE_URL = "https://colon.click/sistema/images";
 
 // =========================================================
 // 💬 HELPERS WHATSAPP CLOUD API
@@ -324,43 +210,36 @@ async function trackEvent(db, businessId, event) {
 }
 
 // =========================================================
-// 🌵 BIENVENIDA – Saludo + selección de perfil
+// 🌵 BIENVENIDA – Saludo + selección de ruta
 // =========================================================
 
 async function handleWelcome(wa, db, from) {
+  // Obtener las rutas (categorías activas) desde la BD
+  const [routes] = await db.execute(
+    `SELECT id, name, slug FROM categories WHERE active = 1 ORDER BY sort_order ASC`
+  );
+
+  if (!routes.length) {
+    await sendText(wa, from, "😔 No hay rutas disponibles en este momento.");
+    return;
+  }
+
   const body =
-    `📲 *Bienvenido a CristóbalBot* 🌵\n` +
+    `📲 *¡Hola! Bienvenido a CristóbalBot* 🌵\n\n` +
     `Soy tu guía turística digital del municipio de ` +
-    `*Colón, Querétaro*. 🌮✨\n\n` +
-    `Para recomendarte la mejor experiencia, cuéntame:\n` +
-    `*¿Qué tipo de visitante eres?*\n\n` +
+    `*Colón, Querétaro*. 🇲🇽\n\n` +
+    `🗺️ Tenemos *${routes.length} rutas turísticas*\n` +
+    `que puedes explorar.\n\n` +
+    `Selecciona la que más te interese 👇\n\n` +
     `_Escribe *ayuda* si necesitas asistencia_`;
 
-  await sendList(wa, from, body, "🧭 Elegir perfil", [
+  await sendList(wa, from, body, "🧭 Ver Rutas", [
     {
-      title: "Tipo de visitante",
-      rows: [
-        {
-          id: "profile_viajero",
-          title: "🇪🇸 Viajero / Negocios",
-          description: "Europa, Internacional o Trabajo",
-        },
-        {
-          id: "profile_aventura",
-          title: "🏔️ Aventura",
-          description: "Senderismo, Escalada, Tirolesa",
-        },
-        {
-          id: "profile_religioso",
-          title: "🙏 Turismo Religioso",
-          description: "Basílica, Misiones, Capillas",
-        },
-        {
-          id: "profile_vino",
-          title: "🍷 Turismo de Vino",
-          description: "Viñedos, Queserías, Catas",
-        },
-      ],
+      title: "Rutas turísticas",
+      rows: routes.map((r) => ({
+        id: `route_${r.id}`,
+        title: `${CAT_EMOJI[r.id] || "📍"} ${r.name.replace(/^Ruta\s+de(l|\s+la)?\s+/i, "")}`.substring(0, 24),
+      })),
     },
   ]);
 
@@ -369,267 +248,71 @@ async function handleWelcome(wa, db, from) {
 }
 
 // =========================================================
-// 🌵 PERFIL SELECCIONADO → Bienvenida + Menú del perfil
+// 🌵 RUTA SELECCIONADA → Link del mapa + negocios activos
 // =========================================================
 
-async function handleProfileSelected(wa, db, from, profile) {
-  const welcomeText = PROFILE_WELCOME[profile];
-  if (welcomeText) {
-    await sendText(wa, from, welcomeText);
-  }
-  await sendProfileMenu(wa, from, profile);
-  await upsertSession(db, from, "pmenu", { profile });
-}
+async function handleRouteSelected(wa, db, from, catId) {
+  // Obtener info de la categoría/ruta desde la BD
+  const [catRows] = await db.execute(
+    `SELECT id, name, slug FROM categories WHERE id = ? AND active = 1`,
+    [catId]
+  );
+  const cat = catRows[0];
+  if (!cat) return;
 
-async function sendProfileMenu(wa, from, profile) {
-  const menu = PROFILE_MENUS[profile];
-  if (!menu) return;
+  const emoji = CAT_EMOJI[cat.id] || "📍";
+  const mapLink = `${MAP_BASE_URL}/${cat.slug}`;
+
+  // Enviar el enlace del mapa
+  await sendText(
+    wa,
+    from,
+    `${emoji} *${cat.name}*\n\n` +
+      `🗺️ *Mapa interactivo de la ruta:*\n` +
+      `👉 ${mapLink}\n\n` +
+      `📋 A continuación te muestro los\n` +
+      `lugares disponibles en esta ruta:`
+  );
+
+  // Mostrar negocios publicados de la categoría activa
+  const [businesses] = await db.execute(
+    `SELECT b.id, b.name, b.address, b.rating, b.featured
+     FROM businesses b
+     WHERE b.category_id = ? AND b.status = 'published'
+     ORDER BY b.featured DESC, b.rating DESC`,
+    [catId]
+  );
+
+  if (!businesses.length) {
+    await sendText(
+      wa,
+      from,
+      `😔 Aún no hay lugares registrados en\n` +
+        `*${cat.name}*.\n\n` +
+        `Escribe *menu* para ver otras rutas.`
+    );
+    await upsertSession(db, from, "route_selected", { route: catId });
+    return;
+  }
 
   const body =
-    `📍 *Menú — ${PROFILE_NAMES[profile]}*\n\n` +
-    `Selecciona una opción para explorar 👇\n\n` +
-    `💡 _Escribe *menu* para volver aquí\n` +
-    `Escribe *ayuda* para asistencia_`;
+    `${emoji} *${cat.name}*\n\n` +
+    `✅ Encontré *${businesses.length}* lugar(es).\n\n` +
+    `Selecciona uno para ver su ficha completa 👇`;
 
-  await sendList(wa, from, body, menu.btn, [
-    { title: "Opciones", rows: menu.rows },
+  const rows = businesses.slice(0, 10).map((b) => ({
+    id: `biz_${b.id}`,
+    title: b.name.substring(0, 24),
+  }));
+
+  await sendList(wa, from, body, "📋 Ver Lugares", [
+    { title: cat.name.substring(0, 24), rows },
   ]);
+
+  await upsertSession(db, from, `route:${catId}`, { route: catId });
 }
 
-// =========================================================
-// 🌵 CONTENIDO ENRIQUECIDO POR OPCIÓN
-// (Solo datos que existen en la base de datos)
-// =========================================================
 
-async function handleRichContent(wa, db, from, richId, ctx) {
-  switch (richId) {
-    // ─────────────────────────────────────────────────────
-    // 🍷🧀 VIÑEDOS Y QUESERÍAS (cat 3 desde BD)
-    // ─────────────────────────────────────────────────────
-    case "ruta_queso_vino": {
-      const [businesses] = await db.execute(
-        `SELECT id, name, description, phone, whatsapp
-         FROM businesses
-         WHERE category_id = 3 AND status = 'published'
-         ORDER BY featured DESC, rating DESC`
-      );
-
-      if (!businesses.length) {
-        await sendText(wa, from, `😔 Aún no hay viñedos ni queserías registrados.`);
-        await sendProfileMenu(wa, from, ctx.profile);
-        break;
-      }
-
-      let text = `🍷🧀 *Viñedos y Queserías de Colón*\n\n`;
-      for (const b of businesses) {
-        text += `📌 *${b.name}*\n`;
-        if (b.description) {
-          const short = b.description.length > 120
-            ? b.description.substring(0, 120) + "…"
-            : b.description;
-          text += `   ${short}\n`;
-        }
-        if (b.phone) text += `   📞 ${b.phone}\n`;
-        text += "\n";
-      }
-      text += `Selecciona uno de la lista para ver su ficha completa:`;
-      await sendText(wa, from, text);
-      await handleBusinessList(wa, db, from, 3, ctx);
-      break;
-    }
-
-    // ─────────────────────────────────────────────────────
-    // 📍 MAPA DE SPOTS DE AVENTURA (cat 9 GPS desde BD)
-    // ─────────────────────────────────────────────────────
-    case "mapa_aventura": {
-      await sendText(
-        wa,
-        from,
-        `📍 *Spots de aventura en Colón*\nTe comparto las ubicaciones:`
-      );
-      const [spots] = await db.execute(
-        `SELECT id, name, address, lat, lng FROM businesses
-         WHERE category_id = 9 AND status = 'published'
-         AND lat IS NOT NULL AND lng IS NOT NULL`
-      );
-      for (const spot of spots.slice(0, 3)) {
-        if (spot.lat && spot.lng) {
-          await sendLocation(
-            wa,
-            from,
-            spot.lat,
-            spot.lng,
-            spot.name,
-            spot.address
-          );
-        }
-      }
-      await sendButtons(wa, from, "¿Algo más?", [
-        { id: "sub_cat_9", title: "📋 Ver todos" },
-        { id: "go_pmenu", title: "🔙 Volver" },
-      ]);
-      await upsertSession(db, from, "rich:mapa_aventura", ctx);
-      break;
-    }
-
-    // ─────────────────────────────────────────────────────
-    // 🧀 QUESERÍAS (businesses 31, 32 desde BD)
-    // ─────────────────────────────────────────────────────
-    case "queserias": {
-      const [businesses] = await db.execute(
-        `SELECT id, name, description, phone, whatsapp
-         FROM businesses
-         WHERE id IN (31, 32) AND status = 'published'`
-      );
-
-      if (!businesses.length) {
-        await sendText(wa, from, `😔 Aún no hay queserías registradas.`);
-        await sendProfileMenu(wa, from, ctx.profile);
-        break;
-      }
-
-      let text = `🧀 *Queserías de Colón*\n\n`;
-      for (const b of businesses) {
-        text += `📌 *${b.name}*\n`;
-        if (b.description) text += `   ${b.description}\n`;
-        if (b.phone) text += `   📞 ${b.phone}\n`;
-        if (b.whatsapp) text += `   💬 wa.me/${b.whatsapp}\n`;
-        text += "\n";
-      }
-      await sendText(wa, from, text);
-      await sendButtons(wa, from, "¿Qué te interesa?", [
-        { id: "sub_vinedos", title: "🍷 Ver viñedos" },
-        { id: "go_pmenu", title: "🔙 Volver" },
-      ]);
-      await upsertSession(db, from, "rich:queserias", ctx);
-      break;
-    }
-
-    // ─────────────────────────────────────────────────────
-    // 🍽️ RESTAURANTES (cat 1 desde BD)
-    // ─────────────────────────────────────────────────────
-    case "maridajes": {
-      const [restaurants] = await db.execute(
-        `SELECT id, name, description, phone, whatsapp
-         FROM businesses
-         WHERE category_id = 1 AND status = 'published'
-         ORDER BY featured DESC, rating DESC`
-      );
-
-      if (!restaurants.length) {
-        await sendText(wa, from, `😔 Aún no hay restaurantes registrados.`);
-        await sendProfileMenu(wa, from, ctx.profile);
-        break;
-      }
-
-      let text = `🍽️ *Restaurantes en Colón*\n\n`;
-      for (const b of restaurants) {
-        text += `📌 *${b.name}*\n`;
-        if (b.description) {
-          const short = b.description.length > 120
-            ? b.description.substring(0, 120) + "…"
-            : b.description;
-          text += `   ${short}\n`;
-        }
-        if (b.phone) text += `   📞 ${b.phone}\n`;
-        text += "\n";
-      }
-      text += `Selecciona uno de la lista para ver su ficha completa:`;
-      await sendText(wa, from, text);
-      await handleBusinessList(wa, db, from, 1, ctx);
-      break;
-    }
-
-    // ─────────────────────────────────────────────────────
-    // 📞 CONTACTO CON PRESTADORES (dinámico desde BD)
-    // ─────────────────────────────────────────────────────
-    case "contacto_prestadores": {
-      const [bizList] = await db.execute(
-        `SELECT id, name, whatsapp, phone, category_id
-         FROM businesses
-         WHERE status = 'published'
-           AND whatsapp IS NOT NULL AND whatsapp != ''
-         ORDER BY featured DESC, rating DESC
-         LIMIT 10`
-      );
-      if (!bizList.length) {
-        await sendText(
-          wa,
-          from,
-          `📞 No hay prestadores con contacto WhatsApp registrado aún.`
-        );
-        await sendProfileMenu(wa, from, ctx.profile);
-        break;
-      }
-      let text =
-        `📞 *Conectar con prestador*\n\n` +
-        `Contacta directamente por WhatsApp:\n\n`;
-      for (const b of bizList) {
-        const preMsg = encodeURIComponent(
-          `Hola, vi tu servicio en CristóbalBot y me interesa saber más sobre ${b.name}`
-        );
-        text +=
-          `${CAT_EMOJI[b.category_id] || "📌"} *${b.name}*\n` +
-          `   👉 wa.me/${b.whatsapp}?text=${preMsg}\n\n`;
-      }
-      await sendText(wa, from, text);
-      await sendButtons(wa, from, "¿Algo más?", [
-        { id: "go_pmenu", title: "🔙 Menú" },
-      ]);
-      await upsertSession(db, from, "rich:contacto_prestadores", ctx);
-      break;
-    }
-
-    // ─────────────────────────────────────────────────────
-    default:
-      await sendText(
-        wa,
-        from,
-        "Lo siento, esa opción no está disponible aún.\nEscribe *menu* para volver."
-      );
-      break;
-  }
-}
-
-// =========================================================
-// 🔘 SUB-ACCIONES DE CONTENIDO ENRIQUECIDO
-// =========================================================
-
-async function handleRichSubAction(wa, db, from, richId, input, ctx) {
-  // ── Acciones comunes ───────────────────────────────────
-  if (input === "go_pmenu") {
-    await sendProfileMenu(wa, from, ctx.profile);
-    await upsertSession(db, from, "pmenu", ctx);
-    return true;
-  }
-  if (input === "sub_vinedos" || input === "sub_cat_3") {
-    await handleBusinessList(wa, db, from, 3, ctx);
-    return true;
-  }
-  if (input === "sub_cat_1") {
-    await handleBusinessList(wa, db, from, 1, ctx);
-    return true;
-  }
-  if (input === "sub_cat_9") {
-    await handleBusinessList(wa, db, from, 9, ctx);
-    return true;
-  }
-
-  // ── Si el input es una opción de perfil, navegar ───────
-  if (OPTION_ACTION[input]) {
-    const action = OPTION_ACTION[input];
-    if (action.type === "rich") {
-      await handleRichContent(wa, db, from, action.id, ctx);
-    } else if (action.type === "cat") {
-      await handleBusinessList(wa, db, from, action.catId, ctx);
-    } else if (action.type === "biz") {
-      await handleBusinessFicha(wa, db, from, action.bizId, ctx);
-    }
-    return true;
-  }
-
-  return false;
-}
 
 // =========================================================
 // 📋 LISTADO DE NEGOCIOS POR CATEGORÍA
@@ -637,15 +320,16 @@ async function handleRichSubAction(wa, db, from, richId, input, ctx) {
 
 async function handleBusinessList(wa, db, from, catId, ctx) {
   const [businesses] = await db.execute(
-    `SELECT id, name, address, rating, featured
-     FROM businesses
-     WHERE category_id = ? AND status = 'published'
-     ORDER BY featured DESC, rating DESC`,
+    `SELECT b.id, b.name, b.address, b.rating, b.featured
+     FROM businesses b
+     JOIN categories c ON b.category_id = c.id
+     WHERE b.category_id = ? AND b.status = 'published' AND c.active = 1
+     ORDER BY b.featured DESC, b.rating DESC`,
     [catId]
   );
 
   const [catRow] = await db.execute(
-    "SELECT name FROM categories WHERE id = ?",
+    "SELECT name FROM categories WHERE id = ? AND active = 1",
     [catId]
   );
   const catName = catRow[0]?.name || "Categoría";
@@ -667,12 +351,9 @@ async function handleBusinessList(wa, db, from, catId, ctx) {
   const rows = businesses.slice(0, 10).map((b) => ({
     id: `biz_${b.id}`,
     title: b.name.substring(0, 24),
-    description:
-      `${b.rating > 0 ? `⭐ ${b.rating} · ` : ""}` +
-      `${(b.address || "Colón, Qro.").substring(0, 60)}`,
   }));
 
-  await sendList(wa, from, body, "📋 Ver lugares", [
+  await sendList(wa, from, body, "📋 Ver Lugares", [
     { title: catName.substring(0, 24), rows },
   ]);
 
@@ -711,7 +392,7 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
 
   // Construir ficha con datos de BD
   let card = `${CAT_EMOJI[biz.category_id] || "📌"} *${biz.name}*\n`;
-  card += `📂 ${biz.category_name}\n\n`;
+  card += `▸ ${biz.category_name}\n\n`;
 
   if (biz.description) {
     const short =
@@ -721,18 +402,20 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
     card += `${short}\n\n`;
   }
 
-  if (biz.address) card += `📍 ${biz.address}\n`;
-  if (biz.phone) card += `📞 ${biz.phone}\n`;
-
-  if (biz.whatsapp) {
-    card += `💬 WhatsApp: wa.me/${biz.whatsapp}\n`;
+  if (biz.address) card += `◦ ${biz.address}\n`;
+  if (biz.lat && biz.lng) {
+    const lat = parseFloat(biz.lat);
+    const lng = parseFloat(biz.lng);
+    card += `◦ Maps: https://www.google.com/maps?q=${lat},${lng}\n`;
+    card += `◦ Waze: https://waze.com/ul?ll=${lat},${lng}&navigate=yes\n`;
   }
+  if (biz.phone) card += `◦ ${biz.phone}\n`;
 
   if (biz.schedule) {
     try {
       const s = JSON.parse(biz.schedule);
       card +=
-        `🕐 ` +
+        `◦ ` +
         Object.entries(s)
           .map(([k, v]) => `${k}: ${v}`)
           .join(" | ") +
@@ -742,33 +425,19 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
     }
   }
 
-  if (parseFloat(biz.rating) > 0) card += `⭐ ${biz.rating} / 5\n`;
-
   if (amenities.length) {
-    card += `\n🏷️ *Amenidades:*\n${amenities.map((a) => `  • ${a.name}`).join("\n")}\n`;
-  }
-
-  // Enlace de contacto directo con mensaje pre-rellenado
-  if (biz.whatsapp) {
-    const preMsg = encodeURIComponent(
-      `Hola, vi tu servicio en CristóbalBot y me interesa saber más sobre ${biz.name}`
-    );
-    card += `\n🔗 *Contactar ahora:*\nhttps://wa.me/${biz.whatsapp}?text=${preMsg}`;
+    card += `\n*Amenidades:*\n${amenities.map((a) => `  · ${a.name}`).join("\n")}\n`;
   }
 
   await sendText(wa, from, card);
 
-  // Botones de acción (máx 3)
-  const buttons = [];
-  if (biz.lat && biz.lng) {
-    buttons.push({ id: `loc_${bizId}`, title: "📍 Ubicación" });
-  }
-  if (biz.whatsapp) {
-    buttons.push({ id: `wa_${bizId}`, title: "📞 Contactar" });
-  }
-  buttons.push({ id: `more_${bizId}`, title: "➡️ Más opciones" });
+  // Botones de acción: fotos y volver
+  const buttons = [
+    { id: `fotos_${bizId}`, title: "📸 Ver Fotos" },
+    { id: "go_routes", title: "🔙 Volver" },
+  ];
 
-  await sendButtons(wa, from, "¿Qué te gustaría hacer?", buttons.slice(0, 3));
+  await sendButtons(wa, from, "¿Qué deseas hacer?", buttons.slice(0, 3));
 
   await trackEvent(db, bizId, "chatbot_view");
   await upsertSession(db, from, `biz:${bizId}`, ctx);
@@ -789,19 +458,19 @@ async function handleMoreOptions(wa, db, from, bizId) {
     wa,
     from,
     `➡️ *Más opciones para ${name}*`,
-    "📋 Ver opciones",
+    "📋 Ver Opciones",
     [
       {
         title: "Opciones",
         rows: [
           {
             id: `fotos_${bizId}`,
-            title: "📸 Ver fotos",
+            title: "📸 Ver Fotos",
             description: "Galería de imágenes",
           },
           {
-            id: "go_pmenu",
-            title: "🏠 Menú principal",
+            id: "go_routes",
+            title: "🏠 Menú Principal",
             description: "Volver al inicio",
           },
         ],
@@ -821,7 +490,19 @@ async function handleLocation(wa, db, from, bizId) {
   );
   const b = r[0];
   if (b?.lat && b?.lng) {
-    await sendLocation(wa, from, b.lat, b.lng, b.name, b.address);
+    const lat = parseFloat(b.lat);
+    const lng = parseFloat(b.lng);
+    const googleUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+    const wazeUrl = `https://waze.com/ul?ll=${lat},${lng}&navigate=yes`;
+
+    await sendText(
+      wa,
+      from,
+      `📍 *Ubicación de ${b.name}*\n\n` +
+        `📍 ${b.address || "Colón, Querétaro"}\n\n` +
+        `🗺️ *Google Maps:*\n${googleUrl}\n\n` +
+        `🟦 *Waze:*\n${wazeUrl}`
+    );
     await trackEvent(db, bizId, "directions_click");
   } else {
     await sendText(
@@ -868,33 +549,35 @@ async function handleWhatsAppLink(wa, db, from, bizId) {
 // =========================================================
 
 async function handlePhotos(wa, db, from, bizId) {
-  const [images] = await db.execute(
-    "SELECT path, caption FROM business_images WHERE business_id = ? ORDER BY sort_order LIMIT 5",
-    [bizId]
-  );
   const [br] = await db.execute(
     "SELECT name, cover_image FROM businesses WHERE id = ?",
     [bizId]
   );
   const biz = br[0];
-  const total = images.length + (biz?.cover_image ? 1 : 0);
 
-  if (!total) {
+  if (!biz?.cover_image) {
     await sendText(
       wa,
       from,
-      "📸 Este lugar aún no tiene fotos publicadas."
+      "Por el momento no hay imágenes para mostrar.\n\nEscribe *hola* en cualquier momento para volver a empezar el flujo."
     );
     return;
   }
 
-  await sendText(
-    wa,
+  const imageUrl = `${IMAGES_BASE_URL}/${biz.cover_image}`;
+
+  // Enviar la imagen directamente por WhatsApp
+  await sendWA(
+    wa.phoneNumberId,
+    wa.token,
     from,
-    `📸 *Fotos de ${biz?.name}*\n\n` +
-      `🖼️ ${total} foto(s) disponibles.\n\n` +
-      `_Las fotos están disponibles en la plataforma\n` +
-      `web de ColonBot._`
+    {
+      type: "image",
+      image: {
+        link: imageUrl,
+        caption: `📸 *${biz.name}*`,
+      },
+    }
   );
 }
 
@@ -906,12 +589,11 @@ async function handlePhotos(wa, db, from, bizId) {
 
 async function handleTools(wa, from) {
   const text =
-    `🛠️ *Ayuda — CristóbalBot*\n\n` +
+    `🛠️ *Ayuda — CristóbalBot*\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n\n` +
     `📌 *Comandos disponibles:*\n` +
     `   • Escribe *hola* para empezar de nuevo\n` +
-    `   • Escribe *menu* para volver al menú\n` +
-    `   • Escribe el nombre de una categoría\n` +
-    `     (restaurantes, hoteles, viñedos, etc.)\n\n` +
+    `   • Escribe *menu* para ver las rutas\n\n` +
     `🚨 *Emergencias:*\n` +
     `   Llama al *911*\n\n` +
     `📍 *Municipio de Colón, Querétaro*`;
@@ -992,14 +674,9 @@ async function handleMessage(wa, db, from, msg, contactName) {
     ctx = {};
   }
 
-  // ── "menu" / "inicio" → volver al menú del perfil ─────
-  if (["menu", "inicio", "volver"].includes(lower) || input === "go_pmenu") {
-    if (ctx.profile) {
-      await sendProfileMenu(wa, from, ctx.profile);
-      await upsertSession(db, from, "pmenu", ctx);
-    } else {
-      await handleWelcome(wa, db, from);
-    }
+  // ── "menu" / "inicio" → volver a las rutas ──────────────
+  if (["menu", "inicio", "volver"].includes(lower) || input === "go_routes" || input === "go_pmenu") {
+    await handleWelcome(wa, db, from);
     return;
   }
 
@@ -1025,12 +702,11 @@ async function handleMessage(wa, db, from, msg, contactName) {
     return;
   }
 
-  // ── Detección de palabras clave ────────────────────────
-  if (KEYWORDS[lower] && state && state !== "welcome") {
-    const action = KEYWORDS[lower];
-    if (action.startsWith("cat_")) {
-      const catId = parseInt(action.replace("cat_", ""), 10);
-      await handleBusinessList(wa, db, from, catId, ctx);
+  // ── Selección de ruta desde cualquier estado ───────────
+  if (input.startsWith("route_")) {
+    const catId = parseInt(input.replace("route_", ""), 10);
+    if (catId) {
+      await handleRouteSelected(wa, db, from, catId);
       return;
     }
   }
@@ -1039,68 +715,14 @@ async function handleMessage(wa, db, from, msg, contactName) {
   //  Routing por ESTADO
   // ═══════════════════════════════════════════════════════
 
-  // ── WELCOME (seleccionar perfil) ───────────────────────
+  // ── WELCOME (seleccionar ruta) ─────────────────────────
   if (state === "welcome" || !session) {
-    if (input.startsWith("profile_")) {
-      const profile = input.replace("profile_", "");
-      if (PROFILE_MENUS[profile]) {
-        await handleProfileSelected(wa, db, from, profile);
-        return;
-      }
-    }
     await handleWelcome(wa, db, from);
     return;
   }
 
-  // ── PMENU (menú del perfil) ────────────────────────────
-  if (state === "pmenu") {
-    if (OPTION_ACTION[input]) {
-      const action = OPTION_ACTION[input];
-      if (action.type === "rich") {
-        await handleRichContent(wa, db, from, action.id, ctx);
-      } else if (action.type === "cat") {
-        await handleBusinessList(wa, db, from, action.catId, ctx);
-      } else if (action.type === "biz") {
-        await handleBusinessFicha(wa, db, from, action.bizId, ctx);
-      }
-      return;
-    }
-    if (input.startsWith("profile_")) {
-      const profile = input.replace("profile_", "");
-      if (PROFILE_MENUS[profile]) {
-        await handleProfileSelected(wa, db, from, profile);
-        return;
-      }
-    }
-    await sendProfileMenu(wa, from, ctx.profile || "viajero");
-    await upsertSession(db, from, "pmenu", ctx);
-    return;
-  }
-
-  // ── RICH CONTENT (sub-botones) ─────────────────────────
-  if (state.startsWith("rich:")) {
-    const richId = state.replace("rich:", "");
-    const handled = await handleRichSubAction(
-      wa,
-      db,
-      from,
-      richId,
-      input,
-      ctx
-    );
-    if (handled) return;
-
-    if (ctx.profile) {
-      await sendProfileMenu(wa, from, ctx.profile);
-      await upsertSession(db, from, "pmenu", ctx);
-    } else {
-      await handleWelcome(wa, db, from);
-    }
-    return;
-  }
-
-  // ── CATEGORY LIST (seleccionar negocio) ────────────────
-  if (state.startsWith("cat:")) {
+  // ── ROUTE SELECTED / CAT LIST (seleccionar negocio) ────
+  if (state.startsWith("route:") || state === "route_selected" || state.startsWith("cat:")) {
     if (input.startsWith("biz_")) {
       const bizId = parseInt(input.replace("biz_", ""), 10);
       if (bizId) {
@@ -1108,21 +730,7 @@ async function handleMessage(wa, db, from, msg, contactName) {
         return;
       }
     }
-    if (OPTION_ACTION[input]) {
-      const action = OPTION_ACTION[input];
-      if (action.type === "rich") {
-        await handleRichContent(wa, db, from, action.id, ctx);
-      } else if (action.type === "cat") {
-        await handleBusinessList(wa, db, from, action.catId, ctx);
-      } else if (action.type === "biz") {
-        await handleBusinessFicha(wa, db, from, action.bizId, ctx);
-      }
-      return;
-    }
-    if (ctx.profile) {
-      await sendProfileMenu(wa, from, ctx.profile);
-      await upsertSession(db, from, "pmenu", ctx);
-    }
+    await handleWelcome(wa, db, from);
     return;
   }
 
@@ -1177,9 +785,8 @@ async function handleMessage(wa, db, from, msg, contactName) {
       );
       return;
     }
-    if (input === "go_pmenu") {
-      await sendProfileMenu(wa, from, ctx.profile);
-      await upsertSession(db, from, "pmenu", ctx);
+    if (input === "go_routes") {
+      await handleWelcome(wa, db, from);
       return;
     }
     await handleBusinessFicha(wa, db, from, bizId, ctx);
