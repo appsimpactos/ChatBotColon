@@ -390,7 +390,22 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
     [bizId]
   );
 
-  // Construir ficha con datos de BD
+  // ── 1) Enviar imagen de portada si existe (sin texto) ──
+  if (biz.cover_image) {
+    const imageUrl = `${IMAGES_BASE_URL}/${biz.cover_image}`;
+    try {
+      await sendWA(wa.phoneNumberId, wa.token, from, {
+        type: "image",
+        image: { link: imageUrl },
+      });
+      // Pequeña pausa para que WhatsApp entregue la imagen antes del texto
+      await new Promise((r) => setTimeout(r, 1500));
+    } catch (imgErr) {
+      logger.warn("No se pudo enviar imagen de portada", imgErr?.response?.data || imgErr);
+    }
+  }
+
+  // ── 2) Construir ficha con descripción e info ──────────
   let card = `${CAT_EMOJI[biz.category_id] || "📌"} *${biz.name}*\n`;
   card += `▸ ${biz.category_name}\n\n`;
 
@@ -431,7 +446,7 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
 
   await sendText(wa, from, card);
 
-  // Botones de acción: fotos y volver
+  // ── 3) Botones de acción: fotos y volver ───────────────
   const buttons = [
     { id: `fotos_${bizId}`, title: "📸 Ver Fotos" },
     { id: "go_routes", title: "🔙 Volver" },
@@ -550,35 +565,47 @@ async function handleWhatsAppLink(wa, db, from, bizId) {
 
 async function handlePhotos(wa, db, from, bizId) {
   const [br] = await db.execute(
-    "SELECT name, cover_image FROM businesses WHERE id = ?",
+    "SELECT name FROM businesses WHERE id = ?",
     [bizId]
   );
   const biz = br[0];
+  if (!biz) return;
 
-  if (!biz?.cover_image) {
+  // Obtener fotos extra de la galería (tabla business_images)
+  const [images] = await db.execute(
+    "SELECT path FROM business_images WHERE business_id = ? ORDER BY id ASC",
+    [bizId]
+  );
+
+  if (!images.length) {
     await sendText(
       wa,
       from,
-      "Por el momento no hay imágenes para mostrar.\n\nEscribe *hola* en cualquier momento para volver a empezar el flujo."
+      "📸 No hay fotos adicionales para *" + biz.name + "*.\n\nEscribe *hola* para volver a empezar."
     );
     return;
   }
 
-  const imageUrl = `${IMAGES_BASE_URL}/${biz.cover_image}`;
-
-  // Enviar la imagen directamente por WhatsApp
-  await sendWA(
-    wa.phoneNumberId,
-    wa.token,
-    from,
-    {
-      type: "image",
-      image: {
-        link: imageUrl,
-        caption: `📸 *${biz.name}*`,
-      },
+  // Enviar cada foto de la galería
+  for (const img of images) {
+    const imageUrl = `${IMAGES_BASE_URL}/${img.path}`;
+    try {
+      await sendWA(wa.phoneNumberId, wa.token, from, {
+        type: "image",
+        image: { link: imageUrl },
+      });
+      // Pausa entre imágenes para que WhatsApp las entregue en orden
+      await new Promise((r) => setTimeout(r, 1500));
+    } catch (imgErr) {
+      logger.warn("No se pudo enviar foto de galería", imgErr?.response?.data || imgErr);
     }
-  );
+  }
+
+  // Botones después de la galería
+  await sendButtons(wa, from, "¿Qué deseas hacer?", [
+    { id: `reservar_${bizId}`, title: "📩 Reservar" },
+    { id: "go_routes", title: "🔙 Regresar" },
+  ]);
 }
 
 
@@ -771,6 +798,15 @@ async function handleMessage(wa, db, from, msg, contactName) {
         db,
         from,
         parseInt(input.replace("fotos_", ""), 10)
+      );
+      return;
+    }
+    if (input.startsWith("reservar_")) {
+      await handleWhatsAppLink(
+        wa,
+        db,
+        from,
+        parseInt(input.replace("reservar_", ""), 10)
       );
       return;
     }
