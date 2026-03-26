@@ -390,7 +390,7 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
     [bizId]
   );
 
-  // ── 1) Enviar imagen de portada si existe (sin texto) ──
+  // ── 1) Enviar imagen de portada si existe ───────────────
   if (biz.cover_image) {
     const imageUrl = `${IMAGES_BASE_URL}/${biz.cover_image}`;
     try {
@@ -398,7 +398,6 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
         type: "image",
         image: { link: imageUrl },
       });
-      // Pequeña pausa para que WhatsApp entregue la imagen antes del texto
       await new Promise((r) => setTimeout(r, 1500));
     } catch (imgErr) {
       logger.warn("No se pudo enviar imagen de portada", imgErr?.response?.data || imgErr);
@@ -446,13 +445,14 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
 
   await sendText(wa, from, card);
 
-  // ── 3) Botones de acción: fotos y volver ───────────────
+  // ── 3) Botones de acción ───────────────────────────────
   const buttons = [
-    { id: `fotos_${bizId}`, title: "📸 Ver Fotos" },
+    { id: `fotos_${bizId}`, title: "📸 Ver Imágenes" },
+    { id: `reservar_${bizId}`, title: "📩 Reservar" },
     { id: "go_routes", title: "🔙 Volver" },
   ];
 
-  await sendButtons(wa, from, "¿Qué deseas hacer?", buttons.slice(0, 3));
+  await sendButtons(wa, from, "¿Qué deseas hacer?", buttons);
 
   await trackEvent(db, bizId, "chatbot_view");
   await upsertSession(db, from, `biz:${bizId}`, ctx);
@@ -684,6 +684,44 @@ async function handleMessage(wa, db, from, msg, contactName) {
   if (!input) return;
 
   const lower = input.toLowerCase();
+
+  // ── Detectar mensaje desde la web: "quiero ver las opciones para X" ──
+  const webMatch = lower.match(/quiero ver las opciones para (.+)/i);
+  if (webMatch) {
+    const searchName = webMatch[1].trim();
+    const [bizRows] = await db.execute(
+      `SELECT id FROM businesses WHERE LOWER(name) = LOWER(?) AND status = 'published' LIMIT 1`,
+      [searchName]
+    );
+    if (bizRows.length) {
+      await handleBusinessFicha(wa, db, from, bizRows[0].id, {});
+      return;
+    }
+    // Búsqueda parcial si no se encontró exacto
+    const [fuzzyRows] = await db.execute(
+      `SELECT id, name FROM businesses WHERE LOWER(name) LIKE CONCAT('%', LOWER(?), '%') AND status = 'published' LIMIT 5`,
+      [searchName]
+    );
+    if (fuzzyRows.length === 1) {
+      await handleBusinessFicha(wa, db, from, fuzzyRows[0].id, {});
+      return;
+    }
+    if (fuzzyRows.length > 1) {
+      const rows = fuzzyRows.map((b) => ({
+        id: `biz_${b.id}`,
+        title: b.name.substring(0, 24),
+      }));
+      await sendList(wa, from, `🔍 Encontré *${fuzzyRows.length}* lugares que coinciden con *"${searchName}"*.\n\nSelecciona uno:`, "📋 Ver Lugares", [
+        { title: "Resultados", rows },
+      ]);
+      await upsertSession(db, from, "welcome", {});
+      return;
+    }
+    // No encontrado → bienvenida
+    await sendText(wa, from, `😔 No encontré un lugar llamado *"${searchName}"*.\n\nEscribe *menu* para ver las rutas disponibles.`);
+    await upsertSession(db, from, "welcome", {});
+    return;
+  }
 
   // ── Comandos globales ──────────────────────────────────
   if (["ayuda", "help", "emergencia", "sos"].includes(lower)) {
