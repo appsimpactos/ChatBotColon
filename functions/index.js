@@ -423,7 +423,6 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
     card += `◦ Maps: https://www.google.com/maps?q=${lat},${lng}\n`;
     card += `◦ Waze: https://waze.com/ul?ll=${lat},${lng}&navigate=yes\n`;
   }
-  if (biz.phone) card += `◦ ${biz.phone}\n`;
 
   if (biz.schedule) {
     try {
@@ -440,7 +439,8 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
   }
 
   if (amenities.length) {
-    card += `\n*Amenidades:*\n${amenities.map((a) => `  · ${a.name}`).join("\n")}\n`;
+    card += `\n*Amenidades:*\n${amenities.map((a) => `  · ${a.name}`).join("\n")}\n\n`;
+    card += `Más información en:  ${MAP_BASE_URL}/${biz.id}\n`;
   }
 
   await sendText(wa, from, card);
