@@ -416,6 +416,8 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
     card += `${short}\n\n`;
   }
 
+  card += `Más información en:  ${MAP_BASE_URL}/${biz.id}\n`;
+
   if (biz.address) card += `◦ ${biz.address}\n`;
   if (biz.lat && biz.lng) {
     const lat = parseFloat(biz.lat);
@@ -441,8 +443,6 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
   if (amenities.length) {
     card += `\n*Amenidades:*\n${amenities.map((a) => `  · ${a.name}`).join("\n")}\n\n`;
   }
-
-  card += `Más información en:  ${MAP_BASE_URL}/${biz.id}\n`;
 
   await sendText(wa, from, card);
 
