@@ -236,10 +236,16 @@ async function handleWelcome(wa, db, from) {
   await sendList(wa, from, body, "🧭 Ver Rutas", [
     {
       title: "Rutas turísticas",
-      rows: routes.map((r) => ({
-        id: `route_${r.id}`,
-        title: `${CAT_EMOJI[r.id] || "📍"} ${r.name.replace(/^Ruta\s+de(l|\s+la)?\s+/i, "")}`.substring(0, 24),
-      })),
+      rows: routes.map((r) => {
+        const clean = r.name.replace(/^Ruta\s+de(l|\s+la)?\s+/i, "");
+        const emoji = CAT_EMOJI[r.id] || "📍";
+        // Remove space after emoji to save 1 char; flat truncate at 24
+        const combined = `${emoji}${clean}`;
+        return {
+          id: `route_${r.id}`,
+          title: combined.length <= 24 ? combined : combined.substring(0, 24),
+        };
+      }),
     },
   ]);
 
@@ -262,17 +268,6 @@ async function handleRouteSelected(wa, db, from, catId) {
 
   const emoji = CAT_EMOJI[cat.id] || "📍";
   const mapLink = `${MAP_BASE_URL}/${cat.slug}`;
-
-  // Enviar el enlace del mapa
-  await sendText(
-    wa,
-    from,
-    `${emoji} *${cat.name}*\n\n` +
-      `🗺️ *Mapa interactivo de la ruta:*\n` +
-      `👉 ${mapLink}\n\n` +
-      `📋 A continuación te muestro los\n` +
-      `lugares disponibles en esta ruta:`
-  );
 
   // Mostrar negocios publicados de la categoría activa
   const [businesses] = await db.execute(
@@ -601,6 +596,11 @@ async function handlePhotos(wa, db, from, bizId) {
       logger.warn("No se pudo enviar foto de galería", imgErr?.response?.data || imgErr);
     }
   }
+
+  // Mensaje de opiniones antes de los botones
+  await sendText(wa, from,
+    `Revisa las opiniones de sus visitantes:\n${MAP_BASE_URL}/${bizId}`
+  );
 
   // Botones después de la galería
   await sendButtons(wa, from, "¿Qué deseas hacer?", [
