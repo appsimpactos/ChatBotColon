@@ -57,6 +57,7 @@ const CAT_EMOJI = {
 // ── URL base para las rutas en el mapa ────────────────────
 
 const MAP_BASE_URL = "https://colon.click/sistema/mapa";
+const MAP_LUGAR_BASE_URL = "https://colon.click/sistema/lugar";
 const IMAGES_BASE_URL = "https://colon.click/sistema/images";
 
 // =========================================================
@@ -411,7 +412,15 @@ async function handleBusinessFicha(wa, db, from, bizId, ctx) {
     card += `${short}\n\n`;
   }
 
-  card += `Más información en:  ${MAP_BASE_URL}/${biz.id}\n`;
+  // Slug del nombre del negocio para la URL amigable
+  const lugarSlug = biz.name
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  // quitar acentos
+    .replace(/[^a-z0-9\s-]/g, "")                       // solo letras, números, espacios y guiones
+    .trim()
+    .replace(/\s+/g, "-")                                 // espacios → guiones
+    .replace(/-+/g, "-");                                 // guiones múltiples → uno solo
+  card += `Más información en:  ${MAP_LUGAR_BASE_URL}/${lugarSlug}\n`;
 
   if (biz.address) card += `◦ ${biz.address}\n`;
   if (biz.lat && biz.lng) {
